@@ -85,7 +85,7 @@ app.get('/v1/alerts', function (req, res) {
        var alerts = JSON.parse( data );
        modifiedAlerts = alerts.map( alert => modifyAlert(alert));
 
-       res.end( JSON.stringify(modifiedAlerts));
+       res.end( JSON.stringify({data: modifiedAlerts}));
     });
  })
 
