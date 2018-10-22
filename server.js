@@ -102,8 +102,6 @@ app.get('/api/v1/alert/:id', function (req, res) {
     });
  })
 
-var server = app.listen(8082, function () {
-   var host = server.address().address
-   var port = server.address().port
-   console.log("Example app listening at http://%s:%s", host, port)
-})
+var server = app.listen(process.env.PORT || 4000, function(){
+    console.log('Your node js server is running: ' + process.env.PORT || 4000);
+});
