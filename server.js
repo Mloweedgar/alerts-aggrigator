@@ -4,8 +4,18 @@ var app = express();
 var fs = require("fs");
 
 
+stringToArrayCoordinates = function (stringCoordinates) {
+    const splitCoordinates = stringCoordinates.trim().split(' ');
+
+    const polygon = splitCoordinates.map(splitCoordinate =>
+        splitCoordinate.split(',').reverse().map(value => parseFloat(value)));
+
+    const centroid = polygon[0];
+    return { polygon, centroid };
+  }
+
 modifyAlert = function (alert){
-    console.log('modify alert called');
+    var modifedArea = stringToArrayCoordinates(_.get(alert, "info.area.polygon"));
     var modifiedAlert = {
         source: {
             name: _.get(alert, "info.senderName"),
@@ -35,7 +45,19 @@ modifyAlert = function (alert){
             instruction: _.get(alert, "info.instruction"),
             website: _.get(alert, "info.web")
           },
-        area: {},
+          area: {
+            description:_.get(alert, "info.area.areaDesc"),
+            geometry: {
+                type: 'Polygon',
+                coordinates: [_.get(modifedArea, "polygon")]
+            },
+            centroid: {
+                type: 'Point',
+                coordinates: _.get(modifedArea, "centroid")
+            },
+            altitude: 3034927949938688,
+            ceiling: 5185134378614784
+          },
         resources: [],
         reportedAt:  _.get(alert, "info.onset"),
         expectedAt:  _.get(alert, "info.onset"),
@@ -50,13 +72,18 @@ modifyAlert = function (alert){
     return modifiedAlert;
 }
 
-app.get('/alerts', function (req, res) {
-   fs.readFile( __dirname + "/" + "tma.alert.json", 'utf8', function (err, data) {
-      res.end( data );
-   });
-})
+app.get('/api/v1/alerts', function (req, res) {
+    // First read existing users.
+    fs.readFile( __dirname + "/" + "tma.alert.json", 'utf8', function (err, data) {
+       var alerts = JSON.parse( data );
+       modifiedAlerts = alerts.map( alert => modifyAlert(alert));
 
-app.get('/alert/:id', function (req, res) {
+       res.end( JSON.stringify(modifiedAlerts));
+    });
+ })
+
+
+app.get('/api/v1/alert/:id', function (req, res) {
     // First read existing users.
     fs.readFile( __dirname + "/" + "tma.alert.json", 'utf8', function (err, data) {
        var alerts = JSON.parse( data );
@@ -65,9 +92,9 @@ app.get('/alert/:id', function (req, res) {
         var id = alert.identifier;
            return id === req.params.id;
        });
-       console.log(modifyAlert(alert));
+       var transforemedAlert = modifyAlert(alert);
 
-       res.end( JSON.stringify(alert));
+       res.end( JSON.stringify(transforemedAlert));
     });
  })
 
