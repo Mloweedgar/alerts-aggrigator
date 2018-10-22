@@ -1,4 +1,5 @@
 var express = require('express');
+var path = require('path');
 var _ = require('lodash');
 var app = express();
 var fs = require("fs");
@@ -72,6 +73,9 @@ modifyAlert = function (alert){
     return modifiedAlert;
 }
 
+app.get('/', function(req, res) {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
 app.get('/api/v1/alerts', function (req, res) {
     // First read existing users.
     fs.readFile( __dirname + "/" + "tma.alert.json", 'utf8', function (err, data) {
