@@ -76,7 +76,7 @@ modifyAlert = function (alert){
 app.get('/', function(req, res) {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
-app.get('/api/v1/alerts', function (req, res) {
+app.get('/v1/alerts', function (req, res) {
     // First read existing users.
     fs.readFile( __dirname + "/" + "tma.alert.json", 'utf8', function (err, data) {
        var alerts = JSON.parse( data );
@@ -87,7 +87,7 @@ app.get('/api/v1/alerts', function (req, res) {
  })
 
 
-app.get('/api/v1/alert/:id', function (req, res) {
+app.get('/v1/alert/:id', function (req, res) {
     // First read existing users.
     fs.readFile( __dirname + "/" + "tma.alert.json", 'utf8', function (err, data) {
        var alerts = JSON.parse( data );
