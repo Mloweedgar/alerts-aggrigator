@@ -1,8 +1,11 @@
 var express = require('express');
 var path = require('path');
 var _ = require('lodash');
+var cors = require('cors')
 var app = express();
 var fs = require("fs");
+
+app.use(cors());
 
 
 stringToArrayCoordinates = function (stringCoordinates) {
